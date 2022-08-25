@@ -1,0 +1,26 @@
+# Use root/example as user/password credentials
+version: '3.9'
+
+services:
+  mongodb:
+    image: library/mongo:latest
+    container_name: my-mongo
+    ports:
+      - 27017:27017
+    restart: always
+    networks:
+      - mongo
+
+  mongoimport:
+    image: library/mongo:latest
+    container_name: my-import
+    depends_on:
+      - mongodb
+    volumes:
+      - ./mongo_seed/arxiv-metadata-oai-snapshot.json:/src/data/arxiv-metadata-oai-snapshot.json
+    command: mongoimport --host my-mongo --db arxiv --collection articles --file /src/data/arxiv-metadata-oai-snapshot.json
+    networks:
+      - mongo
+
+networks:
+  mongo:

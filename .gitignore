@@ -1,0 +1,47 @@
+# IDE environment information
+.idea/
+
+# Data files
+data/*
+!data/pubmed.csv
+
+# Jupyter Notebook
+*/.ipynb_checkpoints/*
+
+# secrets
+settings.yml
+envs/docker/.env
+envs/docker/mongo_seed/arxiv-metadata-oai-snapshot.json
+
+# caches
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache
+.hypothesis
+.pytest_cache
+
+#.ipython
+history.sqlite
+
+# pip installer logs
+pip-log.txt
+
+# pyenv virtualenv
+.python-version
+
+# Other
+tmp
+
+# Installation
+*/*egg-info/*
+**/*.egg
+
+# Builds
+**/build/*
+
+# output
+output/*
+!output/.gitkeep
+!output/tools_confusion_matrix_pubmed.csv
+!output/tools_performance_pubmed.csv

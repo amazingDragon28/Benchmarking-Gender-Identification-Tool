@@ -1,0 +1,13 @@
+,,Predicted as male,Predicted as female,Predicted as unknown
+Gender API,male,1181,25,2
+Gender API,female,53,660,1
+gender-detector,male,948,4,257
+gender-detector,female,4,548,162
+gender-guesser,male,1057,3,104
+gender-guesser,female,8,581,65
+genderize.io,male,1167,18,0
+genderize.io,female,37,665,0
+Name API,male,1111,23,33
+Name API,female,22,621,13
+NamSor,male,1171,38,0
+NamSor,female,27,687,0

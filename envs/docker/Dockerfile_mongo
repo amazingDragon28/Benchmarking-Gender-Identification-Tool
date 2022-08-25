@@ -1,0 +1,13 @@
+FROM mongo:5.0
+
+ARG DATABASE_URI
+ARG USERNAME
+ARG PASSWORD
+
+ENV DATABASE_URI ${DATABASE_URI}
+ENV USERNAME ${MONGO_INITDB_USER}
+ENV PASSWORD ${MONGO_INITDB_PW}
+
+COPY ./mongo_seed/arxiv-metadata-oai-snapshot.json /arxiv-metadata-oai-snapshot.json
+
+CMD mongoimport --username ${USERNAME} --password ${PASSWORD} --uri ${DATABASE_URI} --collection arxiv --drop --file /arxiv-metadata-oai-snapshot.json
