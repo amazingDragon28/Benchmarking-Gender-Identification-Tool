@@ -40,8 +40,4 @@ tmp
 # Builds
 **/build/*
 
-# output
-output/*
-!output/.gitkeep
-!output/tools_confusion_matrix_pubmed.csv
-!output/tools_performance_pubmed.csv
+

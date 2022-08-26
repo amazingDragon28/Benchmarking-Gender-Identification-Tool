@@ -33,7 +33,7 @@ class GenderApiRunner:
 
     def main(self):
         output = self.query_full_name()
-        output = pd.concat([test_data, output], axis=1)
+        output = pd.concat([self.test_data, output], axis=1)
 
         if Path(self.output_file).exists():
             output.to_csv(self.output_file, mode='a', index = False, header=False)
@@ -182,7 +182,7 @@ def run_gender_detector(test_data):
 def run_gender_guesser(test_data):
     # case sensitive, only identify firsy name with capital
 
-    dec = gender.Detector()
+    dec = gender.Detector(case_sensitive=False)
     output = pd.DataFrame()
 
     for name in test_data['first_name']:
