@@ -45,3 +45,5 @@ output/*
 !output/.gitkeep
 !output/tools_confusion_matrix_pubmed.csv
 !output/tools_performance_pubmed.csv
+
+scripts/test1.py
