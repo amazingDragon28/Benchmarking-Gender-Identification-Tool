@@ -61,9 +61,8 @@ class GenderApiRunner:
 
 def get_authors_name():
     client = MongoClient()
-    # # art = client.arxiv.articles.find_one()
     articles = client.arxiv.articles
-    # # cursor = articles.find({})
+    cursor = articles.find({})
     authors = pd.DataFrame()
     # # i = 0
     # # for art in cursor:
@@ -85,7 +84,7 @@ def run_gender_detector(test_data):
     detector = gd.GenderDetector()
     output = pd.DataFrame()
 
-    for name in test_data['first name']:
+    for name in test_data['first_name']:
         try:
             name = re.split("\s|\.\s", name)[0]
             output = pd.concat([output, pd.DataFrame.from_records([{"api_gender": detector.guess(name)}])], ignore_index=True)
@@ -94,7 +93,7 @@ def run_gender_detector(test_data):
 
     output = pd.concat([test_data, output], axis=1)
 
-    if Path(str(OUTPUT_FILE)+"/gender_detector_pubmed.csv").exists():
+    if Path(str(OUTPUT_FILE)+"/gender_detector_arxiv.csv").exists():
         output.to_csv(str(OUTPUT_FILE)+"/gender_detector_arxiv.csv", mode='a', index = False, header=False)
     else:
         output.to_csv(str(OUTPUT_FILE)+"/gender_detector_arxiv.csv", index = False)
@@ -106,7 +105,7 @@ def run_gender_guesser(test_data):
     dec = gender.Detector(case_sensitive=False)
     output = pd.DataFrame()
 
-    for name in test_data['first name']:
+    for name in test_data['first_name']:
         name = re.split("\s|\.\s", name)[0]
         output = pd.concat([output, pd.DataFrame({"api_gender": dec.get_gender(name), "api_gender_final": dec.get_gender(name)}, index=[0])], ignore_index=True)
     
@@ -171,32 +170,32 @@ if __name__ == "__main__":
     
     # authors = get_authors_name()
 
-    # authors = pd.read_csv("author_1.csv")
+    # authors = pd.read_csv("author_2.csv")
     # print(authors.shape)
 
     # # drop rows with NaN first name
-    # authors = authors.dropna(subset=['first name'])
+    # authors = authors.dropna(subset=['first_name'])
     # print(authors.shape)
 
     # # drop rows with initials first name
-    # ini_index = authors[authors['first name'].str.match(r'[A-Za-z]\.')].index
+    # ini_index = authors[authors['first_name'].str.match(r'[A-Za-z]\.')].index
     # authors = authors.drop(ini_index)
     # authors = authors.reset_index(drop=True)
     # authors.to_csv("author_without_initial.csv", index=False)
     # print(authors.shape)
 
-    # # drop duplicate first names
-    # authors = authors.drop_duplicates(subset='first name', keep="first")
+    # drop duplicate first names
+    # authors = authors.drop_duplicates(subset='first_name', keep="first")
+    # authors['full_name'] = authors.apply(lambda x: x['first_name'] + ' ' + x['last_name'], axis = 1)
     # authors.to_csv("author_unique.csv", index=False)
     # print(authors.shape)
 
-    # authors = pd.read_csv("scripts/author_unique.csv")
-    # authors['full_name'] = authors.apply(lambda x: x['first name'] + ' ' + x['last name'], axis = 1)
+    authors = pd.read_csv("scripts/author_unique.csv")
 
     # test = authors.sample(n = 100)
     # test = test.reset_index(drop=True)
     # output_ga = run_gender_api(test)
-    # output_gd = run_gender_detector(test)
+    output_gd = run_gender_detector(authors)
     # output_gg = run_gender_guesser(test)
     # output_genderize = run_genderize(test)
 
@@ -209,18 +208,18 @@ if __name__ == "__main__":
     # genders = pd.concat([test, output_ga['api_gender'], output_gd['api_gender'], output_gg['api_gender_final'], output_genderize['api_gender'], output_ga['api_probability'], output_genderize['api_probability']], axis='columns')
     # genders.columns = ['last_name', 'first_name', 'other', 'full_name', 'ga_gender', 'gd_gender', 'gg_gender', 'genderize_gender', 'ga_probability', 'genderize_probability']
     # print(genders.head())
-    genders = pd.read_csv('scripts/gender_test.csv')
-    # gender1 = pd.DataFrame()
-    gender1 = genders.loc[:,'ga_gender':'genderize_gender'].apply(determine_gender, axis=1, result_type='expand')
-    genders.insert(4, 'gender', gender1[0])
+    # genders = pd.read_csv('scripts/gender_test.csv')
+    # # gender1 = pd.DataFrame()
+    # gender1 = genders.loc[:,'ga_gender':'genderize_gender'].apply(determine_gender, axis=1, result_type='expand')
+    # genders.insert(4, 'gender', gender1[0])
 
-    # TODO: remove unknown gender and record the paper id
-    genders = genders.drop(genders[genders['gender'] == 'unknown'].index)
-    genders = genders.reset_index(drop=True)
+    # # TODO: remove unknown gender and record the paper id
+    # genders = genders.drop(genders[genders['gender'] == 'unknown'].index)
+    # genders = genders.reset_index(drop=True)
 
-    gender1 = gender1.drop(genders[genders['gender'] == 'unknown'].index)
-    gender1 = gender1.reset_index(drop=True)
-    genders.insert(5, 'confidence', gender1.apply(cal_confidence, axis=1))
+    # gender1 = gender1.drop(genders[genders['gender'] == 'unknown'].index)
+    # gender1 = gender1.reset_index(drop=True)
+    # genders.insert(5, 'confidence', gender1.apply(cal_confidence, axis=1))
 
-    print("hh")
-    print("hh")
+    # print("hh")
+    # print("hh")

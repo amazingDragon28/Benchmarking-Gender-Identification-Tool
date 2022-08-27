@@ -8,14 +8,14 @@ import numpy as np
 
 from pathlib import Path
 
-GENDER_API_KEY = ''
+GENDER_API_KEY = 'NNnBHUjAS2g3bEaQj5TLR3NDqcScm8hfAVXc'
 GENDER_API_URL = "https://gender-api.com/v2/gender"
 
-NAME_API_KEY = ''
+NAME_API_KEY = '843bd95c449fa0a67b2a9873bfa476b3-user1'
 NAME_API_URL = "https://api.nameapi.org/rest/v5.3/genderizer/persongenderizer?apiKey=" + NAME_API_KEY
 
 NAMSOR_URL = "https://v2.namsor.com/NamSorAPIv2/api2/json/genderFullBatch"
-NAMSOR_KEY = ''
+NAMSOR_KEY = '3443475a9c6cdc01197493f47d70b21c'
 
 TEST_FILE = Path(__file__).parent.joinpath("../data/pubmed.csv")
 OUTPUT_FILE = Path(__file__).parent.joinpath("../output")
@@ -66,7 +66,7 @@ class NameApiRunner:
 
     def main(self):
         output = self.query_full_name()
-        output = pd.concat([test_data, output], axis=1)
+        output = pd.concat([self.test_data, output], axis=1)
 
         if Path(self.output_file).exists():
             output.to_csv(self.output_file, mode='a', index = False, header=False)
