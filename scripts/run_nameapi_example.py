@@ -60,7 +60,7 @@ class NameApiRunner:
                 else:
                     output = pd.concat([output, pd.DataFrame({"name": name, "gender": 'N'}, index=[0])], ignore_index=True)
         
-        output['gender'] = output['gender'].map({'FEMALE':'F','MALE':'M', "UNKNOWN": 'N'})
+        output['api_gender'] = output['api_gender'].map({'FEMALE':'F','MALE':'M'}).fillna('unknown')
         return output
 
 if __name__ == "__main__":

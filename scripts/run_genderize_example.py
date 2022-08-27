@@ -12,7 +12,8 @@ if __name__ == "__main__":
 
     output = pd.DataFrame(Genderize().get(test_data['Name'].str.split(r"\s|\.\s", expand=True)[0]))
     output = output[['name', 'gender']]
-    output['gender'] = output['gender'].map({'female':'F','male':'M', None:'N'})
+    output['gender'] = output['gender'].map({'female':'F','male':'M'})
+    output['gender'] = output['gender'].fillna('unknown')
 
     if Path(OUTPUT_FILE).exists():
             output.to_csv(OUTPUT_FILE, mode='a', index = False, header=False)

@@ -101,8 +101,8 @@ class NameApiRunner:
                 else:
                     output = pd.concat([output, pd.DataFrame({"api_gender": 'unknown', 'api_confidence': 0}, index=[0])], ignore_index=True)
         
-        output['api_gender'] = output['api_gender'].map({'FEMALE':'female','MALE':'male', "UNKNOWN": 'unknown'}).fillna(output['api_gender'])
-        output.to_csv("output_test.csv", index=False)
+        output['api_gender'] = output['api_gender'].map({'FEMALE':'female','MALE':'male'}).fillna('unknown')
+        # output.to_csv("output_test.csv", index=False)
         return output
 
 class NameSorRunner:
@@ -188,7 +188,7 @@ def run_gender_guesser(test_data):
     for name in test_data['first_name']:
         output = pd.concat([output, pd.DataFrame({"api_gender": dec.get_gender(name.title()), "api_gender_final": dec.get_gender(name.title())}, index=[0])], ignore_index=True)
     
-    output['api_gender_final'] = output['api_gender_final'].map({'mostly_female':'female', 'mostly_male': 'male'}).fillna(output['api_gender_final'])
+    output['api_gender'] = output['api_gender_final'].map({'mostly_female':'female', 'mostly_male': 'male', 'andy': 'unknown'}).fillna(output['api_gender_final'])
     output = pd.concat([test_data, output], axis=1)
 
     if Path(str(OUTPUT_FILE)+"/gender_guesser_pubmed.csv").exists():
@@ -203,7 +203,7 @@ def run_genderize(test_data):
     output = pd.DataFrame(Genderize().get(test_data['first_name']))
 
     output = output[['gender', 'count', 'probability']]
-    output['gender'] = output['gender'].map({None:'unknown'}).fillna(output['gender'])
+    output['gender'] = output['gender'].fillna('unknown')
     output = output.rename(columns={'gender': 'api_gender', 'count': 'api_count', 'probability': 'api_probability'})
 
     output = pd.concat([test_data, output], axis=1)
@@ -289,7 +289,7 @@ if __name__ == "__main__":
 
     list_of_metrics = [gender_api_metrics, gender_detector_metrics, gender_guesser_metrics, genderize_metrics, name_api_metrics, namsor_metrics]
     metrics = pd.DataFrame(list_of_metrics, index=['Gender API', 'Gender Detector', 'Gender Guesser', 'Genderize', 'Name API', 'NamSor'], 
-    columns=['errorCoded', 'errorCodedWithouNA', 'naCoded', 'errorGenderBias'])
+    columns=['errorCoded', 'errorCodedWithoutNA', 'naCoded', 'errorGenderBias'])
 
     print(metrics)
     metrics.to_csv(str(OUTPUT_FILE) + "/tools_performance_pubmed.csv")
