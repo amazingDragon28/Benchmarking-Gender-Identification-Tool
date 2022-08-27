@@ -45,3 +45,13 @@ output/*
 !output/.gitkeep
 !output/tools_confusion_matrix_pubmed.csv
 !output/tools_performance_pubmed.csv
+!output/gender_api_pubmed.csv
+!output/gender_detector_pubmed.csv
+!output/gender_guesser_pubmed.csv
+!output/genderize_pubmed.csv
+!output/name_api_pubmed.csv
+!output/namsor_pubmed.csv
+
+scripts/test1.py
+scripts/author_2.csv
+
