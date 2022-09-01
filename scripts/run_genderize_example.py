@@ -4,7 +4,10 @@ from genderize import Genderize
 from pathlib import Path
 
 def run_genderize(test_data, output_file):
-    # only identify first name
+    """
+    Query genderize without an API key. The package can only
+    guess gender from first name.
+    """
 
     output = pd.DataFrame(Genderize().get(test_data['first_name']))
 

@@ -9,6 +9,12 @@ NAME_API_URL = "https://api.nameapi.org/rest/v5.3/genderizer/persongenderizer?ap
 
 
 class NameApiRunner:
+    """
+    Use Name API to guess gender from a full name. The output file contains the predicted gender
+    and confidence score.
+
+    Require an API key. You can replace value of the global variable `API_KEY` with your own Name API key.
+    """
     def __init__(self, url, test_data, output_file):
         self.test_data = test_data
         self.output_file = output_file

@@ -181,7 +181,7 @@ if __name__ == "__main__":
     # drop duplicate first names
     authors = authors.drop_duplicates(subset='first_name', keep="first")
     authors['full_name'] = authors.apply(lambda x: x['first_name'] + ' ' + x['last_name'], axis = 1)
-    authors.to_csv(str(DATA_FILE) + "author_unique.csv", index=False)
+    authors.to_csv(str(DATA_FILE) + "/author_unique.csv", index=False)
 
 
     # authors = pd.read_csv(str(DATA_FILE) + "author_unique.csv")

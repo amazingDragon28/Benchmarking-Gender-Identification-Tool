@@ -27,6 +27,9 @@ TEST_FILE = Path(__file__).parent.joinpath("../data/test.csv")
 OUTPUT_FILE = Path(__file__).parent.joinpath("../output")
 
 def cal_metrics(data_file):
+    """
+    Calculate four performance metrics for tools.
+    """
     api_data = pd.read_csv(data_file)
     mm_df = np.where((api_data['gender'] == 'male') & (api_data['api_gender'] == 'male'))
     mm = mm_df[0].size
