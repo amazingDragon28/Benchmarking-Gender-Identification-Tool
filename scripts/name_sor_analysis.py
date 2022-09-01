@@ -5,8 +5,7 @@ import pandas as pd
 import requests
 
 NAMSOR_URL = "https://v2.namsor.com/NamSorAPIv2/api2/json/genderFullBatch"
-OUTPUT_FILE = Path(__file__).parent.parent / "output" / "name_sor_out.csv"
-KNOWN_DATA_FILE = Path(__file__).parent.parent / "data" / "test_names_1000.csv"
+NAMSOR_KEY = '3443475a9c6cdc01197493f47d70b21c'
 
 
 class NameSorRunner:
@@ -19,52 +18,52 @@ class NameSorRunner:
     Requires an environmental variable set: `NAMSOR_KEY` as the API key when registered.
     """
 
-    def __init__(self, url, output_file, known_data_file):
-        self.known_data = self._read_test_data(known_data_file)
+    def __init__(self, url, test_data, output_file):
+        self.known_data = test_data
+        self.known_data['id'] = self.known_data.index
         self._HEADERS = {
             "Content-Type": "application/json",
             "Accept": "application/json",
-            "X-API-KEY": os.environ["NAMSOR_KEY"]
+            # "X-API-KEY": os.environ["NAMSOR_KEY"]
+            "X-API-KEY": NAMSOR_KEY
         }
         self._URL = url
         self.output_file = output_file
 
-    @staticmethod
-    def _read_test_data(known_data_file):
-        data = pd.read_csv(known_data_file)
-        data['id'] = data.index
-        data = data.rename(columns={"Name": "name"})
-        return data
-
     def main(self):
+        merged_data = self._query_api_and_merge()
         if Path(self.output_file).exists():
             merged_data = pd.read_csv(self.output_file)
         else:
-            merged_data = self._query_api_and_merge()
-        concordance = len(merged_data[merged_data.Gender == merged_data.likelyGender]) / len(merged_data)
-        print(f"Percent concordance: {concordance * 100}")
+            merged_data.to_csv(self.output_file, index = False)
+        return merged_data
 
     def _query_api_and_merge(self):
         outputs = []
-        for lower, upper in zip(range(0, 1901, 100), range(100, 2001, 100)):
+        length = self.known_data.shape[0]
+        for lower, upper in zip(range(0, length-99, 100), range(100, length+1, 100)):
             output = self._query_batch(self.known_data, lower, upper)
             outputs.append(output)
 
         api_out = pd.concat(outputs, ignore_index=True)
-        api_out.set_index("id", inplace=True)
-        merged_data = api_out.join(self.known_data, on="id", lsuffix="_api", rsuffix="_known")
-        merged_data.replace({'female': 'F', 'male': 'M'}, inplace=True)
-        merged_data.to_csv(self.output_file)
+        api_out = api_out[['likelyGender', 'script', 'genderScale', 'score', 'probabilityCalibrated']]
+        api_out = api_out.rename(columns={'script': 'api_script', 'likelyGender': 'api_gender', 'genderScale': 'api_scale', 'score': 'api_score', 'probabilityCalibrated': 'api_probabilityCalibrated'})
+        merged_data = self.known_data.join(api_out, on="id", lsuffix="_api", rsuffix="_known")
+        merged_data = merged_data.drop(columns=['id'])
+        merged_data['api_gender'] = merged_data['api_gender'].fillna('unknown')
+        # merged_data.replace({'female': 'F', 'male': 'M'}, inplace=True)
+        # merged_data.to_csv(self.output_file)
         return merged_data
 
     def _query_batch(self, data, lower, upper):
         subset = data[lower:upper]
+        subset = subset.rename(columns={'full_name': 'name'})
         payload_data = [x for x in subset[["name", "id"]].T.to_dict().values()]
         payload = {"personalNames": payload_data}
         response = requests.request("POST", self._URL, json=payload, headers=self._HEADERS)
         return pd.DataFrame(response.json()['personalNames'])
 
 
-if __name__ == "__main__":
-    runner = NameSorRunner(NAMSOR_URL, OUTPUT_FILE, KNOWN_DATA_FILE)
+def run_name_sor(test_data, output_file):
+    runner = NameSorRunner(NAMSOR_URL, test_data, output_file)
     runner.main()

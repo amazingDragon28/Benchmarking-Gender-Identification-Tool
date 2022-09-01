@@ -158,4 +158,5 @@ dependencies:
     - faker==13.0.0
     - genderize==0.3.1
     - gender-guesser==0.4.0
+    - gender-detector==0.1.0
     - pymongo==3.11.0
