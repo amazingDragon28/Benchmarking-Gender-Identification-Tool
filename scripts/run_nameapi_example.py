@@ -6,44 +6,35 @@ import requests
 # API_KEY = "843bd95c449fa0a67b2a9873bfa476b3-user1"
 API_KEY = "3164de9b685a45b5534e8241e0abf4c2-user1"
 NAME_API_URL = "https://api.nameapi.org/rest/v5.3/genderizer/persongenderizer?apiKey=" + API_KEY
-TEST_FILE = Path(__file__).parent.joinpath("../data/test_names_1000.csv")
-OUTPUT_FILE = Path(__file__).parent.joinpath("../output/name_api_output.csv")
 
 
 class NameApiRunner:
-    def __init__(self, url, test_file, output_file):
-        self.test_data = self.read_data(test_file)
+    def __init__(self, url, test_data, output_file):
+        self.test_data = test_data
         self.output_file = output_file
         self._URL = url
 
-    def read_data(self, test_file):
-        data = pd.read_csv(test_file)
-        return data
-
     def main(self):
         output = self.query_full_name()
+        output = pd.concat([self.test_data, output], axis=1)
+
         if Path(self.output_file).exists():
-            output.to_csv(self.output_file, mode='a', index = False, header=False)
+            output = pd.read_csv(self.output_file)
         else:
             output.to_csv(self.output_file, index = False)
 
-        # Calculate accurate
-        diff = self.test_data['Gender'].compare(output['gender'])
-        accuracy = (output.shape[0] - diff.shape[0]) / output.shape[0]
-        print("The accuracy is {:.2%}".format(accuracy))
-
     def query_full_name(self):
         output = pd.DataFrame()
-        for name in self.test_data['Name']:    
+        for index, name in self.test_data.iterrows():    
             payload = {
                 "inputPerson": {
                     "type": "NaturalInputPerson",
                     "personName":{
                         "nameFields": [ {
-                            "string": name.split(" ")[0],
+                            "string": name['first_name'],
                             "fieldType": "GIVENNAME"
                         }, {
-                            "string": name.split(" ")[-1],
+                            "string": name['last_name'],
                             "fieldType": "SURNAME"
                         }]
                     },
@@ -56,14 +47,13 @@ class NameApiRunner:
                 raise requests.exceptions.HTTPError(response.json()['message'])
             else:
                 if 'gender' in response.json():
-                    output = pd.concat([output, pd.DataFrame({"name": name, "gender": response.json()['gender']}, index=[0])], ignore_index=True)
+                    output = pd.concat([output, pd.DataFrame({"api_gender": response.json()['gender'], 'api_confidence': response.json()['confidence']}, index=[0])], ignore_index=True)
                 else:
-                    output = pd.concat([output, pd.DataFrame({"name": name, "gender": 'N'}, index=[0])], ignore_index=True)
+                    output = pd.concat([output, pd.DataFrame({"api_gender": 'unknown', 'api_confidence': 0}, index=[0])], ignore_index=True)
         
-        output['api_gender'] = output['api_gender'].map({'FEMALE':'F','MALE':'M'}).fillna('unknown')
+        output['api_gender'] = output['api_gender'].map({'FEMALE':'female','MALE':'male'}).fillna('unknown')
         return output
 
-if __name__ == "__main__":
-    runner = NameApiRunner(NAME_API_URL, TEST_FILE, OUTPUT_FILE)
+def run_name_api(test_data, output_file):
+    runner = NameApiRunner(NAME_API_URL, test_data, output_file)
     runner.main()
-

@@ -1,13 +1,20 @@
 import pandas as pd
 import gender_guesser.detector as gender
+import re
 
 from pathlib import Path
 
-TEST_FILE = Path(__file__).parent.joinpath("../data/test_names_1000.csv")
+def run_gender_guesser(test_data, output_file):
+    # case sensitive, only identify firsy name with capital
 
-if __name__ == "__main__":
-    test_data = pd.read_csv(TEST_FILE)
-    dec = gender.Detector()
+    dec = gender.Detector(case_sensitive=False)
+    output = pd.DataFrame()
 
-    for name in test_data['Name']:
-        print(dec.get_gender(name.split(" ")[0]))
+    for name in test_data['first_name']:
+        name = re.split("\s|\.\s", name)[0]
+        output = pd.concat([output, pd.DataFrame({"api_gender": dec.get_gender(name), "api_gender_final": dec.get_gender(name)}, index=[0])], ignore_index=True)
+    
+    output['api_gender'] = output['api_gender_final'].map({'mostly_female':'female', 'mostly_male': 'male', 'andy': 'unknown'}).fillna(output['api_gender_final'])
+    output = pd.concat([test_data, output], axis=1)
+
+    output.to_csv(output_file, index = False)

@@ -2,8 +2,8 @@
 .idea/
 
 # Data files
-data/*
-!data/pubmed.csv
+data/author.csv
+data/author_without_initial.csv
 
 # Jupyter Notebook
 */.ipynb_checkpoints/*
@@ -52,11 +52,16 @@ output/*
 !output/gender_guesser_pubmed.csv
 !output/gender_guesser_arxiv.csv
 !output/genderize_pubmed.csv
+!output/genderize_arxiv.csv
 !output/name_api_pubmed.csv
 !output/namsor_pubmed.csv
 !output/namsor_arxiv.csv
+!output/authors_gender_corpora_10000.7z
+!output/silver_corpora.7z
+!output/tools_performance_arxiv_10000.csv
+!output/no_author_paper_id.txt
+!output/gender_corpora_10000.csv
+!output/genders_10000.csv
 
-scripts/test1.py
-scripts/author_2.csv
-scripts/author_without_initial.csv
+
 
