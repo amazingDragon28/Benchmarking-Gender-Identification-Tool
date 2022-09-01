@@ -13,8 +13,10 @@ The description of each file and folder is as following:
 
 - envs: All environment requirements used in this project, including conda environment and docker environment.
   
-- output: All output files saved in this directory. 
-  - silver_corpora.7z: The final Silver Standard Corpora.
+- output: All output files saved in this directory. Some special data files are explained below.
+  - gender_corpora_10000.csv: This csv file contains the assigned gender and confidence score based on voting mechansim, gender results from four tools and their confidence score for the most frequent 10000 first names in the arXiv data. 
+  - no_author_paper_id.txt: The txt file containing paper ids of all papers that have no author with an identified gender. 
+  - silver_corpora.7z: The final Silver Standard Corpora (papers that have no author with an identified gender are removed).
 
 - scripts: This directory contains all scripts.
   - nam_sor_analysis.py: The code to query NamSor to guess gender.
@@ -24,6 +26,7 @@ The description of each file and folder is as following:
   - run_genderdetector_example.py: The code to query gender detector to guess a gender.
   - run_genderguesser_example.py: The code to query gender-guesser.
   - run_genderize_example: The code to query genderize.io to guess a gender.
+  - run_get_name.py: Obtain author parsed names and paper id from arXiv data set stored in MongoDB.
   - run_nameapi_example: The code to request Name API to predict a gender (need API key).
 
 NOTE: 
@@ -35,5 +38,5 @@ NOTE:
     python run_benchmark_arXiv.py
     ```
 - My supervisor sets Docker environment and stores the arXiv data set in the Docker container. The code for runnning NamSor is a reuse of Stefan's code in the gender-disparity project. Therefore, the code of these parts should not be marked.  
-- I provide my API key for Gender API, Name API and NamSor, so you can use it to test how these tools are used to guess a gender. You can also apply your own API key and replace it on example file. These three tools are not unlimited, so please pay attention to the number of credits you have used.
+- I provide my API key for Gender API, Name API and NamSor, so you can use it to test how these tools are used to guess a gender. You can also apply your own API keys and replace them on corresponding files. These three tools are not unlimited, so please pay attention to the number of credits you have used.
 

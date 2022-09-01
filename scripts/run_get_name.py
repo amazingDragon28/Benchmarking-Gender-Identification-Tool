@@ -13,6 +13,10 @@ MONGO_PASS = "monkey!eats!banana"
 DATA_FILE = Path(__file__).parent.joinpath("../data")
 
 def get_authors_name():
+    """
+    Obtained all paper id and author names of arXiv data from MongoDB
+    """
+
     client = MongoClient()
     articles = client.arxiv.articles
     cursor = articles.find({} ,projection={'_id': True,'id': True, 'authors': True, 'authors_parsed': True})

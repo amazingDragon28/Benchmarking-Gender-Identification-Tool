@@ -5,7 +5,10 @@ import re
 from pathlib import Path
 
 def run_gender_guesser(test_data, output_file):
-    # case sensitive, only identify firsy name with capital
+    """
+    Use the python package gender-guesser to guess gender from a person's 
+    first name. You can create another case sensitive detector using `dec = gender.Detector()`
+    """
 
     dec = gender.Detector(case_sensitive=False)
     output = pd.DataFrame()

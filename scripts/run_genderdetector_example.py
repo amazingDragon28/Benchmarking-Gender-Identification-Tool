@@ -5,7 +5,11 @@ import re
 from pathlib import Path
 
 def run_gender_detector(test_data, output_file):
-    # only identify first name
+    """
+    Use the python package gender detector to predict gender from 
+    a person's first name. 
+    """
+    
     detector = gd.GenderDetector()
     output = pd.DataFrame()
 
